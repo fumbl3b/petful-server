@@ -1,50 +1,55 @@
-const Queue = require('../queue/Queue');
-const store = require('../../store');
+const Queue = require("../queue/Queue");
+const store = require("../../store");
 
 // Set up initial data.
 // --------------------
 
 const pets = {
   cats: new Queue(),
-  dogs: new Queue()
+  dogs: new Queue(),
 };
 
-store.cats.forEach(cat => pets.cats.enqueue(cat));
-store.dogs.forEach(dog => pets.dogs.enqueue(dog));
+store.cats.forEach((cat) => pets.cats.enqueue(cat));
+store.dogs.forEach((dog) => pets.dogs.enqueue(dog));
 
 // --------------------
 
 module.exports = {
   get() {
-    // Return the pets next in line to be adopted.
-    const next = {
-      cat: pets.cats.show(),
-      dog: pets.dogs.show()
-    };
-    return next;
-  },
-  getAll(type = null) {
-    if(type) {
-      if(type === 'dogs' || type === 'cats') {
-        return pets[type].all();
-      } else {
-        throw new Error('Type error');
-      }
+    let result = {};
+    result.cat = pets.cats.show();
+    result.dog = pets.dogs.show();
+    if (!result.cat) {
+      result.cat = {
+        age: null,
+        breed: null,
+        description: null,
+        gender: null,
+        imageURL: null,
+        name: 'All cats Adopted',
+        story: 'Great Job!'
+      };
     }
-    const allPets = {
-      cats: pets.cats.all(),
-      dogs: pets.dogs.all()
-    };
-    return allPets;
+    if (!result.dog) {
+      result.dog = {
+        age: null,
+        breed: null,
+        description: null,
+        gender: null,
+        imageURL: null,
+        name: 'All dogs Adopted',
+        story: 'Great Job!'
+      };
+    }
+    return result;
   },
+
   dequeue(type) {
-    // Remove a pet from the queue.
-    if(type === 'dogs' || type === 'cats') {
-      pets[type].dequeue();
+    if (type === "cat") {
+      pets.cats.dequeue();
     }
-    else {
-      throw new Error('Type error');
+    if (type === "dog") {
+      pets.dogs.dequeue();
     }
-    return this.get();
-  }
+  },
 };
